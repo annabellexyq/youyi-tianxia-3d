@@ -1,0 +1,14 @@
+{
+  "npcs": {
+    "shijing":     { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "bianjing":    { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "fuyao":       { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "biyu":        { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "dangzhou":    { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "cunliu":      { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "keju":        { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "huangchao":   { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "zhangtianyi": { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID（主角，亦可设为可对话）", "secret": "在 gnpc.qq.com 控制台复制的签名密钥" },
+    "waixiti":     { "npcId": "在 gnpc.qq.com 创建后填入 NPC ID", "secret": "在 gnpc.qq.com 控制台复制的签名密钥", "外形": "外泌体晨光" }
+  }
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游医天下 · 游戏介绍</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --ink:#2b2723; --ink2:#4a443d; --paper:#ece7da; --paper2:#e3ddd0;
+    --gold:#9c7b3f; --red:#a33a32; --line:#cdc6b6;
+  }
+  html,body{ height:100%; background:#1b1916; font-family:"Songti SC","STSong","Noto Serif SC",serif; color:var(--ink); }
+  #deck{ position:relative; width:100vw; height:100vh; overflow:hidden; }
+  .slide{
+    position:absolute; inset:0; display:none; flex-direction:column; justify-content:center;
+    padding:7vh 9vw; background:
+      radial-gradient(120% 120% at 80% 10%, #f1ece0 0%, var(--paper) 55%, var(--paper2) 100%);
+    opacity:0; transition:opacity .5s ease;
+  }
+  .slide.active{ display:flex; opacity:1; }
+  .slide::after{ content:""; position:absolute; inset:4vmin; border:1px solid var(--line); pointer-events:none; }
+
+  .tag{ font-size:1.05rem; letter-spacing:.5em; color:var(--gold); margin-bottom:1.2rem; }
+  h1{ font-size:5.2rem; line-height:1.1; letter-spacing:.15em; margin-bottom:1.2rem; }
+  h2{ font-size:2.6rem; letter-spacing:.12em; margin-bottom:2rem; position:relative; padding-left:1.4rem; }
+  h2::before{ content:""; position:absolute; left:0; top:.25em; bottom:.25em; width:.28em; background:var(--red); }
+  .sub{ font-size:1.5rem; color:var(--ink2); letter-spacing:.2em; }
+  .lead{ font-size:1.35rem; color:var(--ink2); line-height:1.9; max-width:62ch; }
+
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:2.2rem 3.5rem; max-width:1100px; }
+  .card{ border-left:3px solid var(--gold); padding-left:1.2rem; }
+  .card .k{ font-size:1.5rem; color:var(--red); letter-spacing:.1em; margin-bottom:.4rem; }
+  .card .v{ font-size:1.12rem; color:var(--ink2); line-height:1.75; }
+
+  .flow{ display:flex; flex-wrap:wrap; gap:1rem 0; align-items:stretch; }
+  .step{ flex:1 1 18%; min-width:150px; background:#f5f1e7; border:1px solid var(--line); padding:1.1rem 1rem; text-align:center; }
+  .step .n{ font-size:1.1rem; color:var(--gold); }
+  .step .t{ font-size:1.2rem; margin:.4rem 0; letter-spacing:.1em; }
+  .step .d{ font-size:.95rem; color:var(--ink2); line-height:1.6; }
+  .arrow{ align-self:center; color:var(--gold); font-size:1.6rem; padding:0 .4rem; }
+
+  .cover-title{ font-size:6.5rem; letter-spacing:.25em; }
+  .cover-sub{ margin-top:1.5rem; font-size:1.7rem; color:var(--ink2); letter-spacing:.35em; }
+  .cover-meta{ margin-top:3rem; font-size:1.05rem; color:var(--gold); letter-spacing:.4em; }
+
+  .num{ position:absolute; right:6vw; bottom:6vh; font-size:8rem; color:rgba(156,123,63,.16); font-weight:bold; }
+
+  .nav{ position:fixed; bottom:2.4vh; right:3vw; z-index:50; display:flex; gap:.6rem; }
+  .nav button{
+    font-family:inherit; font-size:.95rem; letter-spacing:.2em; color:var(--ink);
+    background:rgba(236,231,218,.85); border:1px solid var(--line); padding:.5rem 1.1rem; cursor:pointer;
+  }
+  .nav button:hover{ background:var(--gold); color:#fff; }
+  .dots{ position:fixed; bottom:2.6vh; left:3vw; z-index:50; display:flex; gap:.5rem; }
+  .dots i{ width:.7rem; height:.7rem; border-radius:50%; background:var(--line); }
+  .dots i.on{ background:var(--red); }
+  .hint{ position:fixed; top:2.4vh; left:3vw; z-index:50; font-size:.9rem; color:rgba(255,255,255,.4); letter-spacing:.2em; }
+  .credit{ position:fixed; top:1.4vmin; right:1.4vmin; z-index:50; font-size:1rem; color:#9a9a9a; letter-spacing:.12em; font-weight:bold; }
+
+  /* 移动端竖屏适配 */
+  @media (max-width:780px){
+    .slide{ padding:5vh 6vw; justify-content:flex-start; overflow-y:auto; }
+    .tag{ font-size:.8rem; letter-spacing:.3em; margin-bottom:.8rem; }
+    h1{ font-size:2.6rem; letter-spacing:.08em; }
+    h2{ font-size:1.7rem; letter-spacing:.08em; margin-bottom:1.2rem; }
+    .sub{ font-size:1.05rem; letter-spacing:.12em; }
+    .lead{ font-size:1rem; line-height:1.8; max-width:none; }
+    .cover-title{ font-size:clamp(40px,16vw,84px); letter-spacing:.12em; }
+    .cover-sub{ font-size:1.1rem; letter-spacing:.2em; }
+    .cover-meta{ font-size:.85rem; letter-spacing:.2em; margin-top:1.6rem; }
+    .grid{ grid-template-columns:1fr; gap:1.4rem 0; max-width:none; }
+    .card .k{ font-size:1.2rem; }
+    .card .v{ font-size:1rem; line-height:1.7; }
+    .flow{ flex-direction:column; align-items:stretch; gap:.5rem; }
+    .step{ flex:1 1 auto; min-width:0; }
+    .arrow{ transform:rotate(90deg); padding:.1rem 0; align-self:center; }
+    .num{ font-size:4.5rem; right:4vw; bottom:2vh; }
+    .nav{ bottom:1.2vh; right:3vw; }
+    .nav button{ font-size:.8rem; padding:.4rem .8rem; letter-spacing:.1em; }
+    .dots i{ width:.55rem; height:.55rem; }
+    .hint{ font-size:.72rem; }
+    .credit{ font-size:.78rem; }
+  }
+</style>
+</head>
+<body>
+<div id="deck">
+
+  <!-- 封面 -->
+  <section class="slide active">
+    <div class="tag">GAME INTRODUCTION</div>
+    <h1 class="cover-title">游 医 天 下</h1>
+    <div class="cover-sub">白描水墨 · 五脏五色 · 中医诊疗叙事</div>
+    <div class="cover-meta">九境地图 · 类手工白描场景 · 望色归脏 · 五脏显影</div>
+  </section>
+
+  <!-- ① 产品定位 -->
+  <section class="slide">
+    <div class="tag">01 / POSITIONING</div>
+    <h2>产品定位</h2>
+    <div class="grid">
+      <div class="card"><div class="k">品类</div><div class="v">以中医「五脏五色」学说为核心的国风叙事解谜游戏，将传统诊疗化为可玩机制。</div></div>
+      <div class="card"><div class="k">美术</div><div class="v">白描水墨 + 低多边形立体，黑白山水意境与现代程序化美术相融合。</div></div>
+      <div class="card"><div class="k">形态</div><div class="v">上帝视角九境地图探索，每境一座 Three.js 实时渲染的类手工白描场景，循河而上次第解锁。</div></div>
+      <div class="card"><div class="k">受众</div><div class="v">国风文化爱好者、中医科普人群、叙事与解谜游戏玩家；兼具娱乐与文化传播价值。</div></div>
+      <div class="card"><div class="k">差异化</div><div class="v">把「处方」变成可操作的五行调色系统，以望色归脏与五脏显影承载叙事，而非传统战斗驱动。</div></div>
+      <div class="card"><div class="k">价值主张</div><div class="v">在游戏里读懂五脏五色，用「拟方」改变世界，以一介游医之眼遍历九境时疫。</div></div>
+    </div>
+    <div class="num">壹</div>
+  </section>
+
+  <!-- ② 核心技术应用 -->
+  <section class="slide">
+    <div class="tag">02 / TECHNOLOGY</div>
+    <h2>核心技术应用</h2>
+    <div class="grid">
+      <div class="card"><div class="k">Three.js 实时渲染</div><div class="v">程序化占位 + glTF 加载，类手工白描场景的雾色、灯光随组方实时变化，构建可交互世界。</div></div>
+      <div class="card"><div class="k">glTF 资产加载</div><div class="v">支持外部模型导入与程序化占位，人物与场景可平滑替换升级。</div></div>
+      <div class="card"><div class="k">五脏五色组方系统</div><div class="v">数据驱动的状态映射：五色剂量实时作用于场景雾色、灯光与角色腰带色。</div></div>
+      <div class="card"><div class="k">望色归脏推演</div><div class="v">拍照上传 → 五色归脏 → 拟方推演，并结合八字四柱参定先天体质与取向。</div></div>
+      <div class="card"><div class="k">手工级五脏显影</div><div class="v">角色身上实时显影「五色入五脏」，把中医理论具象化为可视反馈。</div></div>
+      <div class="card"><div class="k">轻量前端架构</div><div class="v">importmap + ES Modules，零构建即可在浏览器运行，便于演示与分发。</div></div>
+    </div>
+    <div class="num">贰</div>
+  </section>
+
+  <!-- ③ 游戏创意点 -->
+  <section class="slide">
+    <div class="tag">03 / CREATIVITY</div>
+    <h2>游戏创意点说明</h2>
+    <div class="grid">
+      <div class="card"><div class="k">拟方即调色</div><div class="v">将中医处方抽象为「肝青/心赤/脾黄/肺白/肾黑」五色剂量，用调色盘代替开方。</div></div>
+      <div class="card"><div class="k">五脏显影</div><div class="v">角色身上实时显影「五色入五脏」的疗效反馈，具象化中医理论，可开合查看。</div></div>
+      <div class="card"><div class="k">望色归脏</div><div class="v">上传一张照片，依「五色入五脏」推演归脏并拟方，把望诊变成可玩机制。</div></div>
+      <div class="card"><div class="k">环境即反馈</div><div class="v">场景雾色、灯光、腰带色随组方实时晕染，让「药效」可见可感。</div></div>
+      <div class="card"><div class="k">九境叙事</div><div class="v">上帝视角地图循河解锁，九境各有偏性，组方施治串起整段行医治验。</div></div>
+      <div class="card"><div class="k">白描 × 立体</div><div class="v">类手工白描线稿质感叠加低多边形立体空间，形成独特的中式极简视觉语言。</div></div>
+    </div>
+    <div class="num">叁</div>
+  </section>
+
+  <!-- ④ 核心玩法 -->
+  <section class="slide">
+    <div class="tag">04 / GAMEPLAY</div>
+    <h2>核心玩法说明</h2>
+    <div class="flow">
+      <div class="step"><div class="n">壹</div><div class="t">探图解锁</div><div class="d">上帝视角九境地图，循河而上逐境解锁。</div></div>
+      <span class="arrow">→</span>
+      <div class="step"><div class="n">贰</div><div class="t">入境观察</div><div class="d">进入类手工白描场景，观察环境与人物气色，判断该境偏性。</div></div>
+      <span class="arrow">→</span>
+      <div class="step"><div class="n">叁</div><div class="t">拟方调色</div><div class="d">调五脏五色剂量，实时晕染雾色灯光与腰带色。</div></div>
+      <span class="arrow">→</span>
+      <div class="step"><div class="n">肆</div><div class="t">五脏显影</div><div class="d">查看角色身上五色入五脏的疗效反馈。</div></div>
+      <span class="arrow">→</span>
+      <div class="step"><div class="n">伍</div><div class="t">望色归脏</div><div class="d">拍照上传，五色归脏并拟方推演，结合八字参定先天体质。</div></div>
+    </div>
+    <p class="lead" style="margin-top:3rem;">玩家以「游医」身份遍历九境，用一套可视化的五脏五色组方体系应对不同疫病：每一次调色都是一次处方，每一处显影都是一次疗效，世界因你的药方而改变。</p>
+    <div class="num">肆</div>
+  </section>
+
+  <!-- ⑤ GNPC 智能体对话 -->
+  <section class="slide">
+    <div class="tag">05 / NPC · GNPC</div>
+    <h2>会聊天的药灵 · 智能体对话</h2>
+    <div class="grid">
+      <div class="card"><div class="k">GNPC 智能体平台</div><div class="v">接入腾讯云 GNPC 智能体，把五脏五色、性味归经等中医知识注入可对话 NPC。</div></div>
+      <div class="card"><div class="k">外泌体晨光</div><div class="v">游戏内常驻 NPC，玩家随时点开与它对话，问医理、问剧情、问组方思路。</div></div>
+      <div class="card"><div class="k">望色归脏推演</div><div class="v">上传照片后，它依「五色入五脏」给出归脏与拟方推演，而非空泛应答。</div></div>
+      <div class="card"><div class="k">对话驱动叙事</div><div class="v">NPC 依剧情语境应答，让「游医行脚」的叙事随对话自然推进。</div></div>
+      <div class="card"><div class="k">同源安全调用</div><div class="v">NPC 调用经本地代理签名转发，密钥不落前端，规避 CORS 与泄露。</div></div>
+      <div class="card"><div class="k">可玩化科普</div><div class="v">把枯燥的中医术语变成可对话、可试玩的活体验，兼顾趣味与传播。</div></div>
+    </div>
+    <div class="num">伍</div>
+  </section>
+
+  <!-- ⑥ 扫码试玩（末页 · 二维码居中） -->
+  <section class="slide" style="justify-content:flex-start;padding-top:9vh;">
+    <div class="tag" style="text-align:center;">TRY / 扫码试玩</div>
+    <h2 style="text-align:center;padding-left:0;">扫码即玩《游医天下》</h2>
+    <div style="display:flex;justify-content:center;margin-top:1.5rem;">
+      <img src="qrcode_play.png" alt="扫码试玩" style="width:min(46vmin,360px);height:auto;border:1px solid var(--line);background:var(--paper);padding:10px;">
+    </div>
+    <p class="lead" style="text-align:center;margin:1.6rem auto 0;">手机扫码进入在线试玩 · 与「外泌体晨光」对话，体验望色归脏拟方</p>
+    <p style="text-align:center;color:var(--gold);letter-spacing:.12em;font-size:1rem;margin-top:.6rem;">https://annabellexyq.github.io/youyi-tianxia-3d/</p>
+  </section>
+
+</div>
+
+<div class="hint">← → 翻页 / 空格</div>
+<div class="credit">制作人：AnnabelleXu</div>
+<div class="dots" id="dots"></div>
+<div class="nav">
+  <button id="prev">上一页</button>
+  <button id="next">下一页</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const dots=document.getElementById('dots');
+  let cur=0;
+  slides.forEach((_,i)=>{ const d=document.createElement('i'); if(i===0)d.className='on'; dots.appendChild(d); });
+  function go(n){ cur=(n+slides.length)%slides.length; slides.forEach((s,i)=>s.classList.toggle('active',i===cur)); [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===cur)); }
+  document.getElementById('next').onclick=()=>go(cur+1);
+  document.getElementById('prev').onclick=()=>go(cur-1);
+  addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' '){go(cur+1);e.preventDefault();} if(e.key==='ArrowLeft')go(cur-1); });
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Cloud Studio / IDE
+.cloudstudio/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# misc caches
+*.cache

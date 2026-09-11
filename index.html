@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游医天下（五脏五色 · 手工级显影）</title>
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three.module.js"
+  }
+}
+</script>
+</head>
+<body>
+
+  <!-- 全局错误浮层：在模块加载前注册，便于暴露 ES Module 加载失败等静默错误 -->
+  <script>
+  (function () {
+    function box() {
+      var b = document.getElementById('errBox');
+      if (!b) {
+        b = document.createElement('div'); b.id = 'errBox';
+        b.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:99999;background:#7a1f1f;color:#fff;font:12.5px/1.6 ui-monospace,Menlo,Consolas,monospace;padding:10px 14px;white-space:pre-wrap;max-height:40vh;overflow:auto';
+        document.body.appendChild(b);
+      }
+      return b;
+    }
+    window.addEventListener('error', function (e) {
+      var m = e.message || (e.error && e.error.message) || (e.target && (e.target.src || e.target.href) ? ('资源加载失败: ' + (e.target.src || e.target.href)) : '未知错误');
+      box().textContent += '\n[错误] ' + m;
+    }, true);
+    window.addEventListener('unhandledrejection', function (e) {
+      box().textContent += '\n[Promise] ' + ((e.reason && e.reason.message) || e.reason);
+    });
+  })();
+  </script>
+
+  <!-- 标题屏 -->
+  <div id="title" class="screen on">
+    <div class="sub">明清之交 · 瘟疫流行</div>
+    <h1>游醫天下</h1>
+    <div class="br"></div>
+    <div class="sub">五脏五色 拟方 实时手工级显影</div>
+    <button class="start" id="startBtn">入 卷</button>
+    <div class="leaf">内容为虚构，如有雷同纯属巧合</div>
+  </div>
+
+  <!-- 世界地图屏（上帝视角） -->
+  <div id="mapScreen" class="screen">
+    <div class="map-wrap" id="mapWrap"></div>
+    <div class="map-title"><b>天下疫图</b><span>上帝视角 · 点击地点入其境</span></div>
+    <div class="map-hint">循河而上，九境次第解锁。点击地点入其境；拟方调五脏五色，实时晕染场景，并于人物身上显影五色于五脏——点角色可开合「手工级五脏显影」。</div>
+  </div>
+
+  <!-- 类手工白描场景屏 -->
+  <div id="sceneScreen" class="screen">
+    <!-- 3D 舞台：背景图 + 画布 + 晕影，手机版限制为上端区域 -->
+    <div class="scene-stage" id="sceneStage">
+      <div class="bg-layer" id="bgLayer"></div>
+      <div class="veil" id="veil"></div>
+      <div class="ctag" id="ctag">五脏显影 · 手工级</div>
+    </div>
+    <div class="scene-hud" id="sceneHud"></div>
+    <div class="scene-tools" id="sceneTools"></div>
+    <div class="drawer" id="drawer"></div>
+
+    <!-- 社会背景动画 + 本案情况分析 -->
+    <div class="story-layer" id="storyLayer">
+      <div class="story-shot">
+        <div class="story-cap" id="storyCap"></div>
+      </div>
+      <div class="story-bar">
+        <span id="storyStep"></span>
+        <button class="btn primary" id="storyNext">继续 ▶</button>
+      </div>
+      <div class="analysis" id="analysis">
+        <div class="a-card">
+          <div class="a-title">本案情况分析</div>
+          <div class="a-body" id="analysisBody"></div>
+          <button class="btn primary" id="analysisGo">开始拟方 ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 转归电影动画 -->
+    <div class="outcome-layer" id="outcomeLayer">
+      <div class="outcome-cap" id="outcomeCap"></div>
+      <button class="btn primary outcome-go" id="outcomeGo">观此转归 ▶</button>
+    </div>
+  </div>
+
+  <!-- 结局屏 -->
+  <div id="endScreen" class="screen" style="align-items:center;justify-content:center;text-align:center;background:var(--paper)">
+    <div class="inner" id="endInner"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="disclaimer" id="disclaimer">⚕ 本游戏不构成临床用药建议 · 所拟方药仅供剧情演绎，有病请及时就医</div>
+
+  <!-- GNPC 聊天后端地址：默认为云函数公网地址（绑定自定义域名后对外可用）。
+       本地联调时可改为 '' 走同源的本地 gnpc_proxy.py。 -->
+  <script>window.GNPC_API = 'https://ai-native-d7gjgsyyefdea561d-1302042144.ap-shanghai.app.tcloudbase.com/gnpc/chat';</script>
+  <script src="data.js"></script>
+  <script type="module" src="art3d.js"></script>
+  <script type="module" src="game.js"></script>
+</body>
+</html>

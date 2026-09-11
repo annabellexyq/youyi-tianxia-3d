@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>游医天下 · 游戏介绍预览</title>
+<style>
+  html,body{margin:0;background:#cfc9bc;font-family:"Songti SC","STSong","SimSun",serif;}
+  #wrap{display:flex;flex-direction:column;align-items:center;gap:24px;padding:24px;}
+  .stage{width:1280px;height:720px;position:relative;transform-origin:top center;
+         background:#ece7da;box-shadow:0 8px 30px rgba(0,0,0,.25);overflow:hidden;}
+  .paper2{background:#e3ddd0;}
+  .frame{position:absolute;left:45px;top:45px;width:1190px;height:630px;border:1.5px solid #cdc6b6;box-sizing:border-box;}
+  .credit{position:absolute;right:64px;top:21px;font-size:14px;color:#9a9a9a;text-align:right;letter-spacing:.5px;}
+  .tag{position:absolute;left:86px;top:53px;font-size:15px;color:#9c7b3f;font-family:Arial,Helvetica,sans-serif;letter-spacing:1px;}
+  .heading{position:absolute;left:86px;top:110px;font-size:34px;color:#2b2723;font-weight:700;}
+  .hbar{position:absolute;left:86px;top:200px;width:16px;height:55px;background:#a33a32;}
+  .heading.indent{left:122px;}
+  .card{position:absolute;background:#f5f1e7;border:1px solid #cdc6b6;padding:14px 16px;box-sizing:border-box;}
+  .card .k{color:#a33a32;font-size:18px;font-weight:700;margin-bottom:6px;}
+  .card .v{color:#4a443d;font-size:13.5px;line-height:1.45;}
+  .card .strip{position:absolute;left:0;top:0;width:6px;height:100%;background:#9c7b3f;}
+  .step{position:absolute;background:#f5f1e7;border:1.25px solid #9c7b3f;border-radius:12px;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+        padding:14px 10px;box-sizing:border-box;}
+  .step .n{color:#9c7b3f;font-size:20px;font-weight:700;}
+  .step .t{color:#a33a32;font-size:18px;font-weight:700;margin:6px 0;}
+  .step .d{color:#4a443d;font-size:12px;line-height:1.4;}
+  .ndesc{position:absolute;left:86px;width:1108px;top:560px;color:#4a443d;font-size:16px;line-height:1.5;}
+  .cover-t{position:absolute;left:0;width:1280px;text-align:center;color:#2b2723;font-weight:700;letter-spacing:8px;}
+  .cover-s{position:absolute;left:0;width:1280px;text-align:center;color:#4a443d;}
+  .cover-g{position:absolute;left:0;width:1280px;text-align:center;color:#9c7b3f;font-weight:700;letter-spacing:2px;}
+  .nav{position:fixed;bottom:14px;right:18px;background:#2b2723;color:#f5f1e7;padding:8px 14px;border-radius:20px;font-size:14px;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div id="wrap"></div>
+<div class="nav" id="nav"></div>
+<script>
+const SLIDES=[
+// 0 cover
+`<div class="stage paper2">
+  <div class="frame"></div>
+  <div class="cover-t" style="top:200px;font-size:80px;">游 医 天 下</div>
+  <div class="cover-s" style="top:340px;font-size:26px;">白描水墨 · 五脏五色 · 中医诊疗叙事</div>
+  <div class="cover-g" style="top:420px;font-size:18px;">九境地图 · 类手工白描场景 · 望色归脏 · 五脏显影</div>
+</div>`,
+// 1 产品定位
+`<div class="stage">
+  <div class="credit">制作人：AnnabelleXu</div>
+  <div class="tag">01 / POSITIONING</div>
+  <div class="heading">产品定位</div><div class="hbar"></div>
+  ${cards([
+   ["品类","以中医「五脏五色」学说为核心的国风叙事解谜游戏，将传统诊疗化为可玩机制。"],
+   ["美术","白描水墨 + 低多边形立体，黑白山水意境与现代程序化美术相融合。"],
+   ["形态","上帝视角九境地图探索，每境一座 Three.js 实时渲染的类手工白描场景，循河而上次第解锁。"],
+   ["受众","国风文化爱好者、中医科普人群、叙事与解谜游戏玩家；兼具娱乐与文化传播价值。"],
+   ["差异化","把「处方」变成可操作的五行调色系统，以望色归脏与五脏显影承载叙事，而非传统战斗驱动。"],
+   ["价值主张","在游戏里读懂五脏五色，用「拟方」改变世界，以一介游医之眼遍历九境时疫。"]
+  ])}
+</div>`,
+// 2 核心技术应用
+`<div class="stage">
+  <div class="credit">制作人：AnnabelleXu</div>
+  <div class="tag">02 / TECHNOLOGY</div>
+  <div class="heading">核心技术应用</div><div class="hbar"></div>
+  ${cards([
+   ["Three.js 实时渲染","程序化占位 + glTF 加载，类手工白描场景的雾色、灯光随组方实时变化，构建可交互世界。"],
+   ["glTF 资产加载","支持外部模型导入与程序化占位，人物与场景可平滑替换升级。"],
+   ["五脏五色组方系统","数据驱动的状态映射：五色剂量实时作用于场景雾色、灯光与角色腰带色。"],
+   ["望色归脏推演","拍照上传 → 五色归脏 → 拟方推演，并结合八字四柱参定先天体质与取向。"],
+   ["手工级五脏显影","角色身上实时显影「五色入五脏」，把中医理论具象化为可视反馈。"],
+   ["轻量前端架构","importmap + ES Modules，零构建即可在浏览器运行，便于演示与分发。"]
+  ])}
+</div>`,
+// 3 游戏创意点
+`<div class="stage">
+  <div class="credit">制作人：AnnabelleXu</div>
+  <div class="tag">03 / CREATIVITY</div>
+  <div class="heading">游戏创意点说明</div><div class="hbar"></div>
+  ${cards([
+   ["拟方即调色","将中医处方抽象为「肝青/心赤/脾黄/肺白/肾黑」五色剂量，用调色盘代替开方。"],
+   ["五脏显影","角色身上实时显影「五色入五脏」的疗效反馈，具象化中医理论，可开合查看。"],
+   ["望色归脏","上传一张照片，依「五色入五脏」推演归脏并拟方，把望诊变成可玩机制。"],
+   ["环境即反馈","场景雾色、灯光、腰带色随组方实时晕染，让「药效」可见可感。"],
+   ["九境叙事","上帝视角地图循河解锁，九境各有偏性，组方施治串起整段行医治验。"],
+   ["白描 × 立体","类手工白描线稿质感叠加低多边形立体空间，形成独特的中式极简视觉语言。"]
+  ])}
+</div>`,
+// 4 核心玩法
+`<div class="stage">
+  <div class="credit">制作人：AnnabelleXu</div>
+  <div class="tag">04 / GAMEPLAY</div>
+  <div class="heading">核心玩法说明</div><div class="hbar"></div>
+  ${steps([
+   ["壹","探图解锁","上帝视角九境地图，<br>循河而上逐境解锁。"],
+   ["贰","入境观察","进入类手工白描场景，<br>观察环境与人物气色，<br>判断该境偏性。"],
+   ["叁","拟方调色","调五脏五色剂量，<br>实时晕染雾色、灯光<br>与角色腰带色。"],
+   ["肆","五脏显影","查看角色身上<br>五色入五脏的疗效反馈。"],
+   ["伍","望色归脏","拍照上传，五色归脏<br>并拟方推演，<br>结合八字参定先天体质。"]
+  ])}
+  <div class="ndesc">玩家以「游医」身份遍历九境，用一套可视化的五脏五色组方体系应对不同疫病：<br>每一次调色都是一次处方，每一处显影都是一次疗效，世界因你的药方而改变。</div>
+</div>`
+];
+
+function cards(items){
+  const pos=[[86,240],[700,240],[86,395],[700,395],[86,550],[700,550]];
+  return items.map((it,i)=>{
+    const[l,t]=pos[i];
+    return `<div class="card" style="left:${l}px;top:${t}px;width:494px;height:135px;">
+      <div class="strip"></div><div class="k">${it[0]}</div><div class="v">${it[1]}</div></div>`;
+  }).join("");
+}
+function steps(items){
+  const w=235,gap=13,x=62,top=270;
+  return items.map((it,i)=>{
+    const l=x+i*(w+gap);
+    return `<div class="step" style="left:${l}px;top:${top}px;width:${w}px;height:230px;">
+      <div class="n">${it[0]}</div><div class="t">${it[1]}</div><div class="d">${it[2]}</div></div>`;
+  }).join("");
+}
+
+const wrap=document.getElementById("wrap");
+let idx=0;
+function render(){
+  wrap.innerHTML=SLIDES.map((h,i)=>`<div style="opacity:${i===idx?1:.25}">${h}</div>`).join("");
+  document.getElementById("nav").textContent=`${idx+1} / ${SLIDES.length}（← → 翻页）`;
+  // scale each stage to fit width
+  const scale=Math.min(1,(window.innerWidth-48)/1280);
+  document.querySelectorAll(".stage").forEach(st=>st.style.transform=`scale(${scale})`);
+}
+window.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight")idx=Math.min(SLIDES.length-1,idx+1);
+  if(e.key==="ArrowLeft")idx=Math.max(0,idx-1);
+  render();
+});
+window.addEventListener("resize",render);
+render();
+</script>
+</body>
+</html>

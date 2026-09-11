@@ -32,7 +32,8 @@ python3 gnpc_proxy.py            # 默认 http://localhost:8124/
 
 ## 接入 GNPC（让每境之人会说话）
 1. 在 https://gnpc.qq.com 为每个地点创建 NPC（Agent 模式），人设与知识库见 `GNPC_NPCS.md`。
-2. 创建后复制 **NPC ID** 与 **签名密钥**，填入 `gnpc_config.json` 对应 key
+2. 复制 `gnpc_config.example.json` 为 `gnpc_config.json`，把每个地点创建的 **NPC ID** 与 **签名密钥** 填入对应 key
+   （`gnpc_config.json` 已被 `.gitignore` 忽略，不会提交到仓库；请勿把真实密钥提交）
    （shijing / bianjing / fuyao / biyu / dangzhou / cunliu / keju / huangchao / zhangtianyi）。
 3. 进入游戏，点 3D 角色或「对话」即可与 GNPC 交谈；玩家此前拟的「五脏五色」组方会作为上下文注入。
 

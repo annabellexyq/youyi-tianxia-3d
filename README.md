@@ -8,11 +8,13 @@
 | 平台 | 地址 |
 | --- | --- |
 | GitHub Pages | `https://annabellexyq.github.io/youyi-tianxia-3d/` |
-| 腾讯云 CloudBase（主） | `https://youyitianxia-ai-native-d7gjgsyyefdea561d.webapps.tcloudbase.com/` |
-| 腾讯云 CloudBase（同源备份） | `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/` |
+| 腾讯云 CloudBase（主） | `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/youyi/` |
 
 - 仓库：`https://github.com/annabellexyq/youyi-tianxia-3d`（`main` 分支；Pages 从该分支根目录构建，推送后 1～3 分钟生效）
-- ⚠️ 同一个 CloudBase 环境下还托管着另外两个项目，**根 `/` 归本项目独占**，其它项目一律走各自的子目录（见文末「部署」）。
+- ⚠️ 同一个 CloudBase 环境下还托管着「窗外信使」「囊泡漂流」两个项目，三者共用**同一个托管根目录**，所以：
+  - 该环境**根目录 `/` 归「窗外信使」**，本项目放在子目录 `/youyi/`，另外两个走 `/exo-story/`、`/exo-pinch/`
+  - 环境里那个 `youyitianxia-*.webapps.tcloudbase.com` 域名**当前不要使用**：它和 `tcloudbaseapp.com` 指向同一份内容，根路径显示的是「窗外信使」
+  - 本项目入口页 `/youyi/index.html` 内加了 `<base href="/">`，因此相对引用的 `styles.css` / `game.js` / `data.js` / `art3d.js` / `bencao-wheel.js` / `vendor/` / `assets/bgs` / `assets/chars` 仍复用根目录既有文件，**不用重复上传资源**
 
 ## 目录
 ```
@@ -64,32 +66,28 @@ python3 gnpc_proxy.py            # 默认 http://localhost:8124/
 > 内容为虚构，如有雷同纯属巧合。
 
 ## 部署（腾讯云开发 CloudBase）
-- 环境 ID：`ai-native-d7gjgsyyefdea561d`（地域 ap-shanghai），该环境**只有一个静态托管 Bucket、一个 CloudApp**，
-  下面两个域名是**同一份内容**的两个入口（已验证逐字节一致），不要当成两个站点：
-  - CloudApp 独立子域名（主，推荐对外使用）：
-    `https://youyitianxia-ai-native-d7gjgsyyefdea561d.webapps.tcloudbase.com/`
-  - 静态托管共享域名（同源备份）：
-    `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/`
-- ⚠️ **根目录 `index.html` 是多个项目唯一会撞车的文件**：谁最后部署谁生效。
-  本站曾因「窗外信使」后部署覆盖根 `index.html`，导致两个域名都显示窗外信使。
-  因此约定：**本站固定占用根 `index.html`**，其它项目一律放各自子目录：
-  - 窗外信使 → `/exo-story/`，对外地址用 `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/exo-story/`
-    （不要用本项目名注册的 `youyitianxia-*.webapps.tcloudbase.com` 域名，避免两个项目混淆）
+- 环境 ID：`ai-native-d7gjgsyyefdea561d`（地域 ap-shanghai）。该环境**只有一个静态托管 Bucket**，
+  下面三个网关域名指向**同一份内容**（不是多个站点，也不能分别部署）：
+  - `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/`（对外统一用这个）
+  - `https://youyitianxia-ai-native-d7gjgsyyefdea561d.webapps.tcloudbase.com/`
+  - `https://ai-native-d7gjgsyyefdea561d-1302042144.ap-shanghai.app.tcloudbase.com/`
+- ⚠️ **全环境只有一个根 `index.html`**，谁最后部署谁生效。当前归属与路径约定：
+  - 「窗外信使」占用**根 `/`**（另有历史入口 `/exo-story/`，两者都在）
+  - **游医天下（本项目）→ `/youyi/`**
   - 囊泡漂流 EXO-PINCH → `/exo-pinch/`
   - 后台 → `/cloud-admin/`
-  本项目其余文件（`styles.css` / `game.js` / `data.js` / `art3d.js` / `bencao-wheel.js` / `vendor/` / `assets/bgs` / `assets/chars`）
-  都在根目录且与其它项目不冲突，恢复入口只需重传一个 `index.html`。
-- 部署方式：资源为纯静态（index.html / styles.css / data.js / art3d.js / game.js / bencao-wheel.js / vendor / assets / qrcode_play.png），
-  首次用 `manageApps`（serviceName: youyitianxia，framework=static，跳过 install/build）发布到独立子域名；
-  后续小改动用 CLI 单文件发布更快：
+- 本项目的资源文件（`styles.css` / `game.js` / `data.js` / `art3d.js` / `bencao-wheel.js` / `vendor/` /
+  `assets/bgs` / `assets/chars` / `qrcode_play.png`）仍在**根目录**，与其它项目不冲突；
+  入口单独放在 `/youyi/index.html`，页内加了 `<base href="/">` 来复用根目录资源
+  —— 所以**日常改版只需重传一个入口文件，不用重传 41MB 素材**。
+- 更新入口（只覆盖 `/youyi/index.html`，不影响其它项目）：
   ```bash
-  tcb login
-  tcb hosting deploy ./index.html index.html -e ai-native-d7gjgsyyefdea561d
+  # 上传前先在本地 index.html 的 <head> 后补一行 <base href="/">
+  tcb hosting deploy ./index.html youyi/index.html -e ai-native-d7gjgsyyefdea561d
   ```
-- 注意：CDN 有缓存，发布后用无痕模式或带随机 query 访问验证（`?v=$RANDOM`）。
-- 页面内二维码 `qrcode_play.png` 指向上面的 CloudApp 地址。
-- 若发现线上又变成别的项目，执行下面这一条即可恢复本站入口（只覆盖根 `index.html`，不影响其它子目录）：
-  ```bash
-  tcb hosting deploy ./index.html index.html -e ai-native-d7gjgsyyefdea561d
-  ```
-  整站恢复（含资源）用 `manageHosting action=upload`，`cloudPath = /`，忽略 `**/*.md`、`**/*.py`、`**/.DS_Store`。
+- 万一入口又被别的项目覆盖，把上面命令的目标换成 `index.html` 即可把根目录抢回来
+  （但按当前约定根目录应留给「窗外信使」）。
+- 注意：CDN 有缓存，发布后用无痕模式或带随机 query 验证（`?v=$RANDOM`）。
+- 页面内二维码 `qrcode_play.png` 指向 `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/youyi/`。
+- ⚠️ `youyitianxia-*.webapps.tcloudbase.com` 虽然按本项目名注册，但它与 `tcloudbaseapp.com` 共用同一份内容、
+  根路径显示的是「窗外信使」，**暂时不要对外使用**。

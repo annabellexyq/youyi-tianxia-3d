@@ -3,6 +3,17 @@
 白描水墨风格的 3D 叙事游戏：上帝视角地图九境，每境是 Three.js 3D 场景，
 人物是 **GNPC**（gnpc.qq.com 的 AI NPC），3D 美术由 **visvise**（Maya 插件）生成后导入。
 
+## 在线地址
+
+| 平台 | 地址 |
+| --- | --- |
+| GitHub Pages | `https://annabellexyq.github.io/youyi-tianxia-3d/` |
+| 腾讯云 CloudBase（主） | `https://youyitianxia-ai-native-d7gjgsyyefdea561d.webapps.tcloudbase.com/` |
+| 腾讯云 CloudBase（同源备份） | `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/` |
+
+- 仓库：`https://github.com/annabellexyq/youyi-tianxia-3d`（`main` 分支；Pages 从该分支根目录构建，推送后 1～3 分钟生效）
+- ⚠️ 同一个 CloudBase 环境下还托管着另外两个项目，**根 `/` 归本项目独占**，其它项目一律走各自的子目录（见文末「部署」）。
+
 ## 目录
 ```
 youyi-tianxia-3d/

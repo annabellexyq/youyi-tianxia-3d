@@ -70,11 +70,12 @@ python3 gnpc_proxy.py            # 默认 http://localhost:8124/
 > 内容为虚构，如有雷同纯属巧合。
 
 ## 部署（腾讯云开发 CloudBase）
-- 环境 ID：`ai-native-d7gjgsyyefdea561d`（地域 ap-shanghai）。该环境**只有一个静态托管 Bucket**，
-  三个网关域名共用这一份内容（静态托管不能按域名拆分目录，只能靠路径/前缀区分）：
-  - `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/`（通用域名）
+- 环境 ID：`ai-native-d7gjgsyyefdea561d`（地域 ap-shanghai，别名 `annabellexu-game`）。
+  该环境**只有一个静态托管 Bucket**，不能按域名各自挂不同目录，只能靠网关前缀（`PathRewrite.Prefix`）区分：
   - `https://youyitianxia-ai-native-d7gjgsyyefdea561d.webapps.tcloudbase.com/`（本项目 CloudApp 专属域名）
-  - `https://ai-native-d7gjgsyyefdea561d-1302042144.ap-shanghai.app.tcloudbase.com/`
+  - `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/`（通用域名，根 = 窗外信使）
+  - `https://ai-native-d7gjgsyyefdea561d-1302042144.ap-shanghai.app.tcloudbase.com/`（网关默认域名）
+  - 同环境另有两个 CloudApp，各自带专属域名：`exostory`（`appPath=/` → 窗外信使）、`exopinch`（`appPath=/exo-pinch` → 囊泡漂流）
 - ⚠️ **全环境只有一个根 `index.html`**，谁最后部署谁生效。当前路径归属：
   - 「窗外信使」占用**根 `/`**（另有历史入口 `/exo-story/`，两者都在）
   - **游医天下（本项目）实体在 `/youyi/`**

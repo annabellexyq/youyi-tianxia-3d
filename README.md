@@ -51,3 +51,34 @@ python3 gnpc_proxy.py            # 默认 http://localhost:8124/
 - 点角色或「对话」与 GNPC 交谈，NPC 会就你开的方子做出反应。
 
 > 内容为虚构，如有雷同纯属巧合。
+
+## 部署（腾讯云开发 CloudBase）
+- 环境 ID：`ai-native-d7gjgsyyefdea561d`（地域 ap-shanghai），该环境**只有一个静态托管 Bucket、一个 CloudApp**，
+  下面两个域名是**同一份内容**的两个入口（已验证逐字节一致），不要当成两个站点：
+  - CloudApp 独立子域名（主，推荐对外使用）：
+    `https://youyitianxia-ai-native-d7gjgsyyefdea561d.webapps.tcloudbase.com/`
+  - 静态托管共享域名（同源备份）：
+    `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/`
+- ⚠️ **根目录 `index.html` 是多个项目唯一会撞车的文件**：谁最后部署谁生效。
+  本站曾因「窗外信使」后部署覆盖根 `index.html`，导致两个域名都显示窗外信使。
+  因此约定：**本站固定占用根 `index.html`**，其它项目一律放各自子目录：
+  - 窗外信使 → `/exo-story/`，对外地址用 `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/exo-story/`
+    （不要用本项目名注册的 `youyitianxia-*.webapps.tcloudbase.com` 域名，避免两个项目混淆）
+  - 囊泡漂流 EXO-PINCH → `/exo-pinch/`
+  - 后台 → `/cloud-admin/`
+  本项目其余文件（`styles.css` / `game.js` / `data.js` / `art3d.js` / `bencao-wheel.js` / `vendor/` / `assets/bgs` / `assets/chars`）
+  都在根目录且与其它项目不冲突，恢复入口只需重传一个 `index.html`。
+- 部署方式：资源为纯静态（index.html / styles.css / data.js / art3d.js / game.js / bencao-wheel.js / vendor / assets / qrcode_play.png），
+  首次用 `manageApps`（serviceName: youyitianxia，framework=static，跳过 install/build）发布到独立子域名；
+  后续小改动用 CLI 单文件发布更快：
+  ```bash
+  tcb login
+  tcb hosting deploy ./index.html index.html -e ai-native-d7gjgsyyefdea561d
+  ```
+- 注意：CDN 有缓存，发布后用无痕模式或带随机 query 访问验证（`?v=$RANDOM`）。
+- 页面内二维码 `qrcode_play.png` 指向上面的 CloudApp 地址。
+- 若发现线上又变成别的项目，执行下面这一条即可恢复本站入口（只覆盖根 `index.html`，不影响其它子目录）：
+  ```bash
+  tcb hosting deploy ./index.html index.html -e ai-native-d7gjgsyyefdea561d
+  ```
+  整站恢复（含资源）用 `manageHosting action=upload`，`cloudPath = /`，忽略 `**/*.md`、`**/*.py`、`**/.DS_Store`。

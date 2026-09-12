@@ -61,8 +61,8 @@ const server = http.createServer((req, res) => {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
   if (req.method === 'OPTIONS') { res.statusCode = 204; res.end(); return; }
-  if (req.method !== 'POST' || req.url !== '/gnpc/chat') {
-    res.statusCode = 404; res.end(JSON.stringify({ error: 'not found' })); return;
+  if (req.method !== 'POST') {
+    res.statusCode = 405; res.end(JSON.stringify({ error: 'method not allowed' })); return;
   }
   let buf = '';
   req.on('data', (c) => (buf += c));

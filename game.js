@@ -514,6 +514,32 @@ function openUpload(loc) {
     addMsg('npc', '（外泌体晨光微微浮动）你来了。你欲问医理，还是这「外泌体」形貌的来历？');
   }
   exo.onclick = () => { chat.hidden = !chat.hidden; if (!chat.hidden) cin.focus(); };
+  // 离线知识库兜底：后端未部署 / 未配置密钥 / 网络失败时，由「外泌体晨光」用游戏内置的
+  // 五脏五色知识本地应答，保证一定能对话，不会报「load failed」。
+  const offlineReply = (q) => {
+    const t = q || '';
+    const has = (...ks) => ks.some(k => t.includes(k));
+    if (has('来历', '是谁', '什么', '外泌体', '你叫', '名字', '你谁')) {
+      return '（外泌体晨光轻晃）我名唤「外泌体晨光」，是五行精气凝成的一缕药灵。你拟的每一张方子，都化作我身上的五色微光——这便是「五色入五脏」的显影。';
+    }
+    if (has('五脏', '五色', '肝', '心', '脾', '肺', '肾', '青', '赤', '黄', '白', '黑')) {
+      return '（它指了指自身的五色流光）肝青木、心赤火、脾黄土、肺白金、肾黑水。你调哪一味色深，哪一脏便得滋养——这便是「拟方即调色」。';
+    }
+    if (has('拟方', '组方', '开方', '药方', '方子', '调色', '怎么玩', '玩法', '怎么治', '治')) {
+      return '（晨光舒展）把处方想成五只色盏：肝青、心赤、脾黄、肺白、肾黑。斟酌剂量，便是在为这一境之人补虚泻实。斟好了，便看世界如何因你而变。';
+    }
+    if (has('望色', '归脏', '拍照', '上传', '照片', '图', '面')) {
+      return '（它凝神）望色归脏，是依「五色入五脏」推演：面上哪色偏盛，便知哪脏有恙。你传来的图，我会试着归脏、拟方——权作一隅之见，有病仍须延医。';
+    }
+    if (has('九境', '地图', '疫', '天下', '关卡', '哪里', '地方')) {
+      return '（它望向远处）九境顺着运河次第铺开，从市井的咳，到关隘的血、园林的郁、湖上的湿……你以游医之眼走过，每一境都是一道医案。';
+    }
+    if (has('你好', '在吗', '在不在', '嗨', '您好', '在')) {
+      return '（晨光微亮）我在。你欲问医理，还是这「外泌体」形貌的来历？';
+    }
+    return '（外泌体晨光浮了浮）你所问，我且以医理相答：医者意也，不执一药、不泥一经。你若说这境的偏性，或你拟的方子，我便与你细论。';
+  };
+
   const sendChat = () => {
     const q = cin.value.trim(); if (!q) return;
     addMsg('me', q); cin.value = '';
@@ -522,13 +548,22 @@ function openUpload(loc) {
     fetch(api, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key: 'waixiti', query: q, conversationId: convId })
-    }).then(r => r.json().then(j => ({ ok: r.ok, j }))).then(({ ok, j }) => {
-      if (!ok || j.error) { addMsg('npc', '（未能接通：' + (j.error || '服务不可用，请确认 GNPC 后端已部署') + '）'); return; }
-      convId = j.conversationId || convId;
-      addMsg('npc', j.reply || '（TA 沉默不语）');
-    }).catch(e => addMsg('npc', '（未能接通：' + e.message + '）')).finally(() => {
-      csend.disabled = false; csend.textContent = '发送';
-    });
+    })
+      .then(r => r.json().then(j => ({ ok: r.ok, j })))
+      .then(({ ok, j }) => {
+        if (ok && j && j.reply) {
+          convId = j.conversationId || convId;
+          addMsg('npc', j.reply);
+        } else if (j && j.error) {
+          // 后端真的返回了错误（如未配置 / 密钥不对）→ 如实展示，便于排查真实 GNPC 配置
+          addMsg('npc', '（后端返回：「' + j.error + '」）');
+        } else {
+          // 网络连不通（load failed）→ 离线知识库兜底
+          addMsg('npc', offlineReply(q));
+        }
+      })
+      .catch(() => addMsg('npc', offlineReply(q)))
+      .finally(() => { csend.disabled = false; csend.textContent = '发送'; });
   };
   csend.onclick = sendChat;
   cin.addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });

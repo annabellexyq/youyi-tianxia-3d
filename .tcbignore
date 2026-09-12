@@ -1,0 +1,19 @@
+# CloudBase 静态托管上传忽略规则（tcb hosting deploy 时生效）
+# 排除版本控制、密钥、本地脚本与构建产物，只上传网页运行所需文件
+.git
+**/.git/**
+**/.git
+node_modules
+**/node_modules/**
+**/*.cache
+.DS_Store
+
+# 密钥与本地开发脚本（网页运行不依赖，且含敏感信息）
+gnpc_config.json
+gnpc_config.example.json
+**/*.py
+**/*.pptx
+cloudfunctions
+ASSET_BRIEF.md
+GNPC_NPCS.md
+README.md

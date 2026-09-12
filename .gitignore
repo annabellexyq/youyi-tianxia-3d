@@ -24,3 +24,6 @@ gnpc_config.json
 
 # misc caches
 *.cache
+
+# 本地宣传物料（含 80MB 视频，不入库）
+promo_assets/

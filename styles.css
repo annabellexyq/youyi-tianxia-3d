@@ -390,5 +390,6 @@ button{font-family:inherit;cursor:pointer}
 .end-table{width:100%;border-collapse:collapse;margin:6px 0 18px;font-size:14px}
 .end-table th,.end-table td{border:1px solid var(--line);padding:7px 10px;text-align:center}
 .end-table th{background:var(--paper-2);letter-spacing:.1em;color:var(--ink-soft);font-weight:600}
-.end-table td:first-child{text-align:left}
+/* 「境」列：表头与其下格子文字统一居中（原先第一列格子被单独设为左对齐） */
+.end-table th:first-child,.end-table td:first-child{text-align:center}
 .end-empty{color:var(--ink-soft);margin:10px 0 18px}

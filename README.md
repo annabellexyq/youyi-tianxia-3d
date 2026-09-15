@@ -18,7 +18,8 @@
     `appPath` 设为 **`/youyi`**，网关把它重写成 `/youyi/*`，所以该域名根路径直接就是本项目 —— 两个地址内容完全一致
   - `/youyi/` 是**自包含目录**（`index.html` + `styles.css` + `game.js` + `data.js` + `art3d.js` + `bencao-wheel.js` + `map-props.js` + `vendor/` + `assets/bgs` + `assets/chars` 全在里面），
     入口页用原始相对路径、**不带** `<base>`，所以在上面两个地址下都能正常解析资源
-  - 页面内二维码 `qrcode_play.png` 指向主域名
+  - 页面内二维码 `qrcode_play.png` 指向**共享域名** `tcloudbaseapp.com/youyi/`（不用 webapps 专属域名：
+    后者在微信内置浏览器里拉不起来，扫了打不开）
 
 ## 目录
 ```
@@ -97,4 +98,5 @@ python3 gnpc_proxy.py            # 默认 http://localhost:8124/
   参考命令：`manageApps(action=deployApp, serviceName=youyitianxia, appPath=/youyi,
   framework=static, installCmd="", buildCmd="", deployCmd="tcb hosting deploy . youyi")`
 - 注意：CDN 有缓存，发布后用无痕模式或带随机 query 验证（`?v=$RANDOM`）。
-- 页面内二维码 `qrcode_play.png` 指向主域名 `https://youyitianxia-ai-native-d7gjgsyyefdea561d.webapps.tcloudbase.com/`。
+- 页面内二维码 `qrcode_play.png` 指向共享域名 `https://ai-native-d7gjgsyyefdea561d-1302042144.tcloudbaseapp.com/youyi/`
+  （原来指向 webapps 专属域名，在微信内置浏览器里拉不起来、扫了打不开；共享域名和其他项目同域，微信里会正常弹「确定访问」）。

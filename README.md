@@ -16,7 +16,7 @@
   - 根目录 `/` 归「窗外信使」；「囊泡漂流」在 `/exo-pinch/`；**本项目实体在 `/youyi/`**
   - 本项目专属域名 `youyitianxia-*.webapps.tcloudbase.com` 是个 CloudApp（`serviceName=youyitianxia`），
     `appPath` 设为 **`/youyi`**，网关把它重写成 `/youyi/*`，所以该域名根路径直接就是本项目 —— 两个地址内容完全一致
-  - `/youyi/` 是**自包含目录**（`index.html` + `styles.css` + `game.js` + `data.js` + `art3d.js` + `bencao-wheel.js` + `vendor/` + `assets/bgs` + `assets/chars` 全在里面），
+  - `/youyi/` 是**自包含目录**（`index.html` + `styles.css` + `game.js` + `data.js` + `art3d.js` + `bencao-wheel.js` + `map-props.js` + `vendor/` + `assets/bgs` + `assets/chars` 全在里面），
     入口页用原始相对路径、**不带** `<base>`，所以在上面两个地址下都能正常解析资源
   - 页面内二维码 `qrcode_play.png` 指向主域名
 

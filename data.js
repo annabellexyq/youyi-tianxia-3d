@@ -120,7 +120,7 @@ const LOCATIONS = [
   },
   {
     id:'keju', name:'科举揭发', subtitle:'其七 · 贡院里的不眠举子',
-    mapPos:{x:76,y:64}, motif:'exam', gnpcKey:'keju',
+    mapPos:{x:80,y:64}, mapPosP:{x:85,y:64}, motif:'exam', gnpcKey:'keju',
     sceneModel:'models/keju_scene.glb', charModel:'models/keju_char.glb',
     bg:'assets/bgs/国风游戏场景背景图_白描水墨墨线_低多边形可转3D_清代贡院_2026-09-11T04-45-03.png',
     char:'assets/chars/国风游戏人物设定图_全身立绘_白描水墨线稿风格_素白背景_清_2026-09-11T04-44-32.png',

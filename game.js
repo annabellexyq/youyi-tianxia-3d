@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { createWorld } from './art3d.js';
 import { openBencaoWheel, mountWheel } from './bencao-wheel.js';
+import { propSVG } from './map-props.js';
 
 const { ORGANS, ORGAN_ORDER, WORLD_MODEL, LOCATIONS, HERBS, FORMULA_RULES } = window.YIYI;
 
@@ -39,20 +40,77 @@ function organTextHex(key) { return key === 'fei' ? '#7a8a95' : ORGANS[key].hex;
 function show(n) {
   Object.values(screens).forEach(s => s.classList.remove('on'));
   screens[n].classList.add('on');
+  if (n === 'map') requestAnimationFrame(alignHorizon);   // 屏显后再量，才量得到真实尺寸
   if (n !== 'scene') { const ol = $('#outcomeLayer'); if (ol) ol.classList.remove('on'); }
 }
 
 /* —— 地图底图 —— */
 function mapSVG() {
-  return `<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  return `<svg class="map-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="800" fill="#f3f1e8"/>
     <path d="M40 740 C 220 660,160 520,360 470 S620 520,720 470 S1020 360,1140 220" fill="none" stroke="#8fa6b0" stroke-width="10" stroke-opacity="0.5" stroke-linecap="round"/>
     <path d="M40 740 C 220 660,160 520,360 470 S620 520,720 470 S1020 360,1140 220" fill="none" stroke="#5d7884" stroke-width="2" stroke-opacity="0.6" stroke-dasharray="2 10"/>
     <g fill="#b9b5a4" fill-opacity="0.7" stroke="#6f6c60" stroke-width="1.4">
       <path d="M0 260 q200 -90 400 -40 t800 -20 V800 H0 Z"/>
-      <path d="M0 520 q300 -110 600 -50 t600 -30 V800 H0 Z"/>
+      <path id="nearRidge" d="M0 520 q300 -110 600 -50 t600 -30 V800 H0 Z"/>
     </g>
   </svg>`;
+}
+
+/* —— 地平线对齐 ——
+ * 底图用 xMidYMid slice，缩放随视口比例变化，山脊落点不固定。
+ * 这里把「近处地平线」整体微调，让它在「科举揭发」处正好从图标与名牌之间的空隙穿过，
+ * 既不压图标、也不压文字框（任何屏幕比例都成立）。 */
+function ridgeYAtX(path, x) {
+  const len = path.getTotalLength();
+  let best = null, bestD = Infinity;
+  for (let i = 0; i <= 480; i++) {
+    const p = path.getPointAtLength(len * i / 480);
+    if (p.y > 700) continue;                 // 跳过收口到画布底边的两段
+    const d = Math.abs(p.x - x);
+    if (d < bestD) { bestD = d; best = p.y; }
+  }
+  return best;
+}
+function alignHorizon() {
+  const wrap = $('#mapWrap');
+  const svg = wrap && wrap.querySelector('svg.map-bg');
+  const ridge = svg && svg.querySelector('#nearRidge');
+  const node = wrap && wrap.querySelector('.node[data-loc="keju"]');
+  if (!svg || !ridge || !node) return;
+  ridge.removeAttribute('transform');
+  const prop = node.querySelector('.prop'), lbl = node.querySelector('.lbl');
+  if (!prop || !lbl) return;
+  const pr = prop.getBoundingClientRect(), lr = lbl.getBoundingClientRect();
+  if (!pr.height || !lr.height) return;
+  const m = svg.getScreenCTM();
+  if (!m) return;
+  const gapY = (pr.bottom + lr.top) / 2;                       // 图标底与名牌顶的空隙中心
+  const pt = svg.createSVGPoint();
+  pt.x = pr.left + pr.width / 2; pt.y = gapY;
+  const vb = pt.matrixTransform(m.inverse());                  // 换算回 viewBox 坐标
+  const yAt = ridgeYAtX(ridge, vb.x);
+  if (yAt == null) return;
+  const dy = vb.y - yAt;
+  if (Math.abs(dy) < 0.5) return;
+  ridge.setAttribute('transform', 'translate(0 ' + dy.toFixed(2) + ')');
+}
+let horizonBound = false;
+function bindHorizon() {
+  if (horizonBound) return;
+  horizonBound = true;
+  // 屏幕比例变了要重排点位（横竖屏切换会切换 mapPos / mapPosP），再重新对齐地平线
+  let t = 0;
+  const onResize = () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const map = $('#mapScreen');
+      if (map && map.classList.contains('on')) buildMap();   // buildMap 内部会再 alignHorizon
+      else alignHorizon();
+    }, 160);
+  };
+  addEventListener('resize', onResize);
+  addEventListener('orientationchange', onResize);
 }
 
 /* —— 标题 / 地图 —— */
@@ -60,19 +118,31 @@ $('#startBtn').addEventListener('click', () => { buildMap(); show('map'); });
 
 function canEnter(i) { return i === 0 || state.visited.has(LOCATIONS[i - 1].id); }
 
+/* 竖屏 / 折叠屏（竖持）时改用 mapPosP —— 这类屏幕窄，点位普遍要再往两侧撑开一点 */
+function isPortraitNarrow() {
+  return window.innerHeight >= window.innerWidth && window.innerWidth <= 1024;
+}
+function posOf(loc) {
+  return (isPortraitNarrow() && loc.mapPosP) ? loc.mapPosP : loc.mapPos;
+}
+
 function buildMap() {
   const wrap = $('#mapWrap'); wrap.innerHTML = '';
   wrap.appendChild(htmlToNode(mapSVG()));
   LOCATIONS.forEach((loc, i) => {
+    const pos = posOf(loc);
     const node = el('div', 'node');
-    node.style.left = loc.mapPos.x + '%'; node.style.top = loc.mapPos.y + '%';
+    node.dataset.loc = loc.id;
+    node.style.left = pos.x + '%'; node.style.top = pos.y + '%';
     if (state.visited.has(loc.id)) node.classList.add('done');
     if (i === state.idx && canEnter(i)) node.classList.add('cur');
     if (!canEnter(i)) node.classList.add('locked');
-    node.innerHTML = `<div class="ring"></div><div class="dot"></div><div class="lbl">${loc.name}</div>`;
+    node.innerHTML = `<div class="prop">${propSVG(loc.id)}<i class="ring"></i></div><div class="lbl">${loc.name}</div>`;
     node.addEventListener('click', () => canEnter(i) ? enterScene(i) : toast('此境尚未解锁——且随张天一一路行去。'));
     wrap.appendChild(node);
   });
+  alignHorizon();
+  bindHorizon();
 }
 
 /* —— 进入 3D 场景 —— */

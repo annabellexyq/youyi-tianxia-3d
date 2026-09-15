@@ -359,5 +359,24 @@
     if (startTrial) startTrial.addEventListener('click', function () { show('game'); });
   })();
   </script>
+
+  <script>
+  /* 底部免责条在竖屏会折行变高（约 30px → 45px），固定值避让不够。
+     这里量出它的真实高度写入 --barH，供入卷页、地图提示、抽屉、提示条等底部元素让位。 */
+  (function () {
+    var bar = document.getElementById('disclaimer');
+    var root = document.documentElement;
+    function syncBarH() {
+      if (!bar) return;
+      var h = Math.ceil(bar.getBoundingClientRect().height);
+      if (h > 0) root.style.setProperty('--barH', h + 'px');
+    }
+    syncBarH();
+    addEventListener('load', syncBarH);
+    addEventListener('resize', syncBarH);
+    addEventListener('orientationchange', function () { setTimeout(syncBarH, 150); });
+    if (window.ResizeObserver) { try { new ResizeObserver(syncBarH).observe(bar); } catch (e) {} }
+  })();
+  </script>
 </body>
 </html>

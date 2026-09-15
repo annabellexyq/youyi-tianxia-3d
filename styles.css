@@ -24,7 +24,7 @@ button{font-family:inherit;cursor:pointer}
 #title .br::after{content:"醫";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--paper);padding:0 14px;color:var(--seal);font-size:20px}
 #title .start{margin-top:10px;padding:12px 40px;background:transparent;border:1.5px solid var(--line);color:var(--ink);letter-spacing:.4em;font-size:18px;border-radius:2px;transition:.25s}
 #title .start:hover{background:var(--ink);color:var(--paper)}
-#title .leaf{position:absolute;font-size:13px;color:var(--ink-faint);letter-spacing:.2em;bottom:24px}
+#title .leaf{position:absolute;font-size:13px;color:var(--ink-faint);letter-spacing:.2em;bottom:calc(var(--barH) + 14px)}
 
 /* 地图屏 */
 #mapScreen{background:var(--paper)}
@@ -33,21 +33,25 @@ button{font-family:inherit;cursor:pointer}
 .map-title{position:absolute;top:18px;left:24px;z-index:5}
 .map-title b{font-size:22px;letter-spacing:.3em}
 .map-title span{display:block;font-size:12px;color:var(--ink-soft);letter-spacing:.3em;margin-top:4px}
-.map-hint{position:absolute;bottom:18px;left:24px;font-size:13px;color:var(--ink-soft);letter-spacing:.1em;z-index:5;max-width:60%}
+.map-hint{position:absolute;bottom:calc(var(--barH) + 14px);left:24px;font-size:13px;color:var(--ink-soft);letter-spacing:.1em;z-index:5;max-width:60%}
 
 .node{position:absolute;transform:translate(-50%,-50%);z-index:6;text-align:center;cursor:pointer;width:120px}
-.node .dot{width:18px;height:18px;margin:0 auto;border-radius:50%;background:var(--paper);border:2px solid var(--line);position:relative;transition:.25s}
-.node .dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--line);opacity:0;transition:.25s}
-.node .ring{position:absolute;left:50%;top:9px;width:34px;height:34px;transform:translate(-50%,-50%);border:1px solid var(--ink-faint);border-radius:50%;opacity:0;animation:pulse 2s infinite}
-.node .lbl{margin-top:8px;font-size:14px;letter-spacing:.2em;color:var(--ink);background:var(--paper);display:inline-block;padding:2px 6px;border:1px solid var(--line);border-radius:2px}
-.node.done .dot{background:var(--ink)}
-.node.done .dot::after{opacity:1}
+/* 节点道具：去底的白描小图，取代原先的圆点 */
+.node .prop{position:relative;width:46px;height:46px;margin:0 auto;color:var(--line);transition:.25s}
+.node .prop svg{width:100%;height:100%;display:block;overflow:visible}
+.node .prop .p-seal{fill:var(--seal);stroke:none;opacity:.85}
+.node .ring{position:absolute;left:50%;top:50%;width:150%;height:150%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#b3392f2e 0%,#b3392f00 68%);opacity:0;animation:halo 2.2s infinite}
+.node .lbl{margin-top:10px;font-size:14px;letter-spacing:.2em;color:var(--ink);background:var(--paper);display:inline-block;padding:2px 6px;border:1px solid var(--line);border-radius:2px}
+.node.done .prop{color:var(--ink)}
+.node.done .prop::after{content:"已";position:absolute;right:-8px;top:-6px;width:15px;height:15px;line-height:15px;font-size:9px;text-align:center;color:var(--paper);background:var(--seal);border-radius:2px;opacity:.9}
 .node.cur .ring{opacity:1}
-.node.cur .dot{border-color:var(--seal);box-shadow:0 0 0 4px #b3392f22}
-.node.locked{opacity:.32;cursor:not-allowed}
-.node.locked .dot{border-style:dashed}
-.node.locked .lbl{text-decoration:line-through}
-@keyframes pulse{0%{transform:translate(-50%,-50%) scale(.7);opacity:.7}70%{transform:translate(-50%,-50%) scale(1.4);opacity:0}100%{opacity:0}}
+.node.cur .prop{color:var(--seal)}
+.node.cur .lbl{border-color:var(--seal);color:var(--seal)}
+/* 未解锁：整块不再压到看不见，道具用浅墨（可辨认），仅地名压暗划线 */
+.node.locked{cursor:not-allowed}
+.node.locked .prop{color:var(--ink-soft);opacity:.8}
+.node.locked .lbl{opacity:.6;text-decoration:line-through}
+@keyframes halo{0%{transform:translate(-50%,-50%) scale(.55);opacity:.95}70%{transform:translate(-50%,-50%) scale(1.15);opacity:0}100%{opacity:0}}
 
 /* 类手工白描场景屏 */
 #sceneScreen{background:#e9e6dd}
@@ -58,7 +62,7 @@ button{font-family:inherit;cursor:pointer}
 /* 手工级暗角 + 颗粒 */
 #sceneScreen .veil{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .7s;background:radial-gradient(circle at 50% 44%,transparent 30%,#00000055 72%,#000000cc 100%);box-shadow:inset 0 0 220px #00000099}
 #sceneScreen.cinema .veil{opacity:1}
-#sceneScreen .ctag{position:absolute;left:20px;bottom:18px;z-index:6;color:#e8b9b3;font-size:12px;letter-spacing:.4em;opacity:0;transition:opacity .7s;text-shadow:0 1px 4px #000}
+#sceneScreen .ctag{position:absolute;left:20px;bottom:calc(var(--barH) + 10px);z-index:6;color:#e8b9b3;font-size:12px;letter-spacing:.4em;opacity:0;transition:opacity .7s;text-shadow:0 1px 4px #000}
 #sceneScreen.cinema .ctag{opacity:.9}
 .scene-hud{position:absolute;top:16px;left:20px;z-index:5;color:var(--paper);text-shadow:0 1px 4px #000}
 .scene-hud .idx{font-size:12px;letter-spacing:.4em;color:#e8b9b3}
@@ -72,7 +76,7 @@ button{font-family:inherit;cursor:pointer}
 .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);letter-spacing:.3em;z-index:4;background:var(--paper)}
 
 /* 叙事/组方抽屉 */
-.drawer{position:absolute;left:0;bottom:0;width:min(560px,46vw);max-height:62vh;overflow:auto;z-index:7;background:var(--paper);border-top:1.5px solid var(--line);border-right:1.5px solid var(--line);padding:22px 26px;box-shadow:0 -10px 40px #00000033;animation:slideup .5s}
+.drawer{position:absolute;left:0;bottom:var(--barH);width:min(560px,46vw);max-height:62vh;overflow:auto;z-index:7;background:var(--paper);border-top:1.5px solid var(--line);border-right:1.5px solid var(--line);padding:22px 26px;box-shadow:0 -10px 40px #00000033;animation:slideup .5s}
 @keyframes slideup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
 .drawer p{line-height:2;font-size:15.5px;text-align:justify;margin:0 0 12px;word-break:keep-all;overflow-wrap:break-word}
 .drawer .seal{position:absolute;right:18px;top:18px;width:44px;height:44px;border:2px solid var(--seal);color:var(--seal);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1.1;text-align:center;transform:rotate(-6deg);opacity:.85}
@@ -114,7 +118,7 @@ button{font-family:inherit;cursor:pointer}
 .drawer .case .ct{font-size:13.5px;color:var(--ink-soft);line-height:1.9}
 
 /* GNPC 对话面板 */
-.chat{position:absolute;right:0;bottom:0;width:min(420px,40vw);height:62vh;z-index:8;background:var(--paper);border-top:1.5px solid var(--line);border-left:1.5px solid var(--line);display:flex;flex-direction:column;box-shadow:0 -10px 40px #00000033;animation:slideup .5s}
+.chat{position:absolute;right:0;bottom:var(--barH);width:min(420px,40vw);height:62vh;z-index:8;background:var(--paper);border-top:1.5px solid var(--line);border-left:1.5px solid var(--line);display:flex;flex-direction:column;box-shadow:0 -10px 40px #00000033;animation:slideup .5s}
 .chat .chead{display:flex;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
 .chat .chead .ava{width:40px;height:56px;background:var(--paper-2);border:1px solid var(--line);overflow:hidden;flex:none}
 .chat .chead .ava svg{width:100%;height:100%}
@@ -130,7 +134,7 @@ button{font-family:inherit;cursor:pointer}
 .chat .cinput button{border:none;border-left:1.5px solid var(--line);background:var(--ink);color:var(--paper);padding:0 18px;letter-spacing:.2em}
 .chat .typing{font-size:12px;color:var(--ink-faint);padding:0 14px 8px}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 22px;border-radius:2px;font-size:14px;letter-spacing:.1em;z-index:99;opacity:0;transition:.3s;pointer-events:none}
+.toast{position:fixed;bottom:calc(var(--barH) + 12px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 22px;border-radius:2px;font-size:14px;letter-spacing:.1em;z-index:99;opacity:0;transition:.3s;pointer-events:none}
 .toast.on{opacity:1}
 
 .drawer p,.drawer .hint,.formula .hint,.jingfang,.result p,.result .env,.result .world,.chat .msg{white-space:pre-line;text-wrap:pretty}
@@ -150,8 +154,8 @@ button{font-family:inherit;cursor:pointer}
   .scene-tools .btn{font-size:12px;padding:6px 10px;letter-spacing:.08em}
 
   /* 抽屉 / 聊天面板：占满下半屏，顶部给工具条留空，底部给免责声明留空 */
-  .drawer{top:calc(46vh + 4px);bottom:30px;left:0;right:0;width:100vw;max-height:none;height:auto;border-right:none;border-top:1.5px solid var(--line);padding:60px 18px 12px 18px}
-  .chat{top:calc(46vh + 4px);bottom:30px;left:0;right:auto;width:100vw;height:auto;border-left:none;padding:60px 0 12px 0}
+  .drawer{top:calc(46vh + 4px);bottom:calc(var(--barH) + 4px);left:0;right:0;width:100vw;max-height:none;height:auto;border-right:none;border-top:1.5px solid var(--line);padding:60px 18px 12px 18px}
+  .chat{top:calc(46vh + 4px);bottom:calc(var(--barH) + 4px);left:0;right:auto;width:100vw;height:auto;border-left:none;padding:60px 0 12px 0}
 
   /* 标题屏：缩小字距，避免溢出 */
   #title h1{font-size:clamp(40px,13vw,90px);letter-spacing:.2em}
@@ -168,7 +172,8 @@ button{font-family:inherit;cursor:pointer}
   .map-title{max-width:calc(100% - 32px)}
   .map-title b{font-size:18px}
   .map-hint{max-width:calc(100% - 32px);font-size:12px}
-  .node{width:96px}
+  .node{width:86px}
+  .node .prop{width:40px;height:40px}
   .node .lbl{font-size:12px;padding:1px 5px}
 }
 
@@ -176,8 +181,9 @@ button{font-family:inherit;cursor:pointer}
 @media (max-width:480px){
   .scene-hud h2{font-size:19px}
   .scene-tools .btn{font-size:11px;padding:6px 9px;letter-spacing:.06em}
-  .node{width:84px}
-  .node .lbl{font-size:11px}
+  .node{width:76px}
+  .node .prop{width:34px;height:34px}
+  .node .lbl{font-size:11px;letter-spacing:.12em}
 }
 
 /* 社会背景动画层 */
@@ -188,7 +194,7 @@ button{font-family:inherit;cursor:pointer}
 .story-cap{font-size:23px;line-height:2.2;letter-spacing:.14em;color:var(--paper);text-shadow:0 2px 12px #000;opacity:0;transform:translateY(14px);white-space:normal;word-break:keep-all;overflow-wrap:break-word;text-wrap:balance}
 .story-cap.show{animation:shotin .9s forwards}
 @keyframes shotin{to{opacity:1;transform:none}}
-.story-bar{position:absolute;bottom:30px;display:flex;gap:16px;align-items:center}
+.story-bar{position:absolute;bottom:calc(var(--barH) + 8px);display:flex;gap:16px;align-items:center}
 .story-bar #storyStep{color:#cdbfa6;font-size:13px;letter-spacing:.3em}
 .analysis{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
 .analysis.on{display:flex}
@@ -264,9 +270,11 @@ button{font-family:inherit;cursor:pointer}
 .bw-side .card .why{font-size:13px;line-height:1.8;color:#A6ACB4}
 .bw-side .card .empty{color:var(--bw-mute);font-size:13px}
 
-/* 常驻免责声明 */
+/* 常驻免责声明（底部条，约 30px 高；下方元素一律让出 --barH 的高度） */
+:root{--barH:calc(32px + env(safe-area-inset-bottom, 0px))}
 .disclaimer{position:fixed;left:0;right:0;bottom:0;z-index:90;background:rgba(28,28,28,.82);color:#f3ead6;
-  font-size:12.5px;letter-spacing:.18em;text-align:center;padding:7px 12px;backdrop-filter:blur(2px);pointer-events:none}
+  font-size:12.5px;letter-spacing:.18em;text-align:center;padding:7px 12px;backdrop-filter:blur(2px);pointer-events:none;
+  padding-bottom:calc(7px + env(safe-area-inset-bottom, 0px))}
 
 /* 右上角：本草升降色盘（本集相关嵌入） */
 .bw-embed{
